@@ -25,6 +25,10 @@ class ActorEntrance(Annotation):
 
     pass
 
+class WarnActorEntrance(ActorEntrance):
+
+    pass
+
 class ActorLine(Annotation):
 
     pass
@@ -46,16 +50,36 @@ class AnnotationParameters:
     margins = None
 
     positions = {
+        Annotation: [None, None],
         ActorEntrance: ["left", None],
+        WarnActorEntrance: ["left", None],
         ActorLine: ["left", None],
         SoundCue: ["right", None],
         WarningNote: [None, None],
         Note: [None, None]
     }
+    margin_map = None
 
-    def __init__(self, margins, positions = None, sqprefix, colors) -> None:
+    def __init__(self, margins, positions = None) -> None:
         self.margins = margins
         if positions is not None:
             self.positions = positions
+        self.margin_map = {
+            "left": margins[0]/2,
+            "right": margins[1]/2,
+            "top": margins[2]/2,
+            "bottom": margins[3]/2
+        }
 
-    def get_snapped_coordinates()
+    def get_snapped_coordinates(self, object: Annotation, page_size):
+        #TODO: COntinue
+        prototypes = self.positions[type(object)]
+        if prototypes is None: 
+            return object.pos
+        new_pos = None
+        for elem, prototype, size in zip(object.pos, prototypes, page_size):
+            if prototype is None:
+                new_pos.append(elem)
+            else:
+                new_pos.append(size)
+        return new_pos
