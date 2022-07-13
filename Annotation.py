@@ -5,6 +5,17 @@ import math
 import numpy as np
 from reportlab.pdfgen import canvas
 
+_ALIGN_MARK = '\u3000'
+_BLACK = (0, 0, 0)
+_WHITE = (0, 0, 0)
+
+def reset_colors(canv: canvas.Canvas):
+    canv.setFillColorRGB(*_BLACK)
+    canv.setStrokeColorRGB(*_BLACK)
+
+def grey(percent: float):
+    return (int(percent*255) for _ in range(3))
+
 class Annotation: 
     '''Base Annotation Class'''
 
@@ -23,6 +34,19 @@ class Annotation:
         pos = params.get_snapped_coordinates(self, canv._pagesize)
         canv.setFontSize(params.smallFontSize)
         canv.drawString(*pos, self.text)
+
+    def _polygon(self, canv: canvas.Canvas, points, fill=None, stroke=None):
+        poly = canv.beginPath()
+        poly.moveTo(*points[0])
+        for i, point in enumerate(points[1:]):
+            poly.lineTo(*points[i+1])
+        poly.lineTo(*points[0])
+        if fill is not None:
+            canv.setFillColorRGB(*fill)
+        if stroke is not None:
+            canv.setStrokeColorRGB(*stroke)
+        canv.drawPath(poly, stroke=stroke is not None, fill=fill is not None)
+        reset_colors(canv)
         
 class ActorMovement(Annotation):
 
@@ -33,8 +57,9 @@ class ActorMovement(Annotation):
         self.actor = actor
         super().__init__(pos, actor.number, actor.name)
 
-    def _draw_Triangle(self, canv: canvas.Canvas, pos, params: AnnotationParameters, rotation=0):
-        base = params.itemSize
+    def _draw_triangle(self, canv: canvas.Canvas, pos, 
+                       params: AnnotationParameters, rotation=0, size=1):
+        base = params.itemSize*size
         height = base*math.sqrt(3)/2
         points = [
             np.array([0, -base/2]),
@@ -53,30 +78,37 @@ class ActorMovement(Annotation):
             np.array([[-1, 0], [0, -1]]),
             np.array([[0, 1], [-1, 0]])
         ]
-        transform = lambda p, r: rotations[r]@((vtrans[r] + p).transpose())
+        transform = lambda p, r: rotations[r]@p.transpose() + vtrans[r].transpose()
         t_points = [transform(p, rotation) for p in points]
-        p = canv.beginPath()
-        p.moveTo(*t_points[0])
-        p.lineTo(*t_points[1])
-        p.lineTo(*t_points[2])
-        canv.drawPath(p)
+        self._polygon(canv, t_points, (255, 255, 0),(255, 0, 0))
 
+    def annotate(self, canv: canvas.Canvas, params: AnnotationParameters, rot=0, size=1):
+        pos = np.array(params.get_snapped_coordinates(self, canv._pagesize))
+        canv.setFontSize(params.bigFontSize)
+        text_pos = (pos+np.array([0, -params.bigFontSize/2/1.2]))
+        canv.drawRightString(*text_pos, f"{self.actor.number} ")
+        self._draw_triangle(canv, pos, params, rot, size)
+        # self._polygon(canv, [[0, pos[1]], [200, pos[1]]], stroke=(0, 0, 0))
 
 class ActorEntrance(ActorMovement):
 
     def annotate(self, canv: canvas.Canvas, params: AnnotationParameters):
-        pos = params.get_snapped_coordinates(self, canv._pagesize)
-        canv.drawAlignedString(*pos ,f"{self.actor.number} .")
-        self._draw_Triangle(canv, pos, params)
-        
+        return super().annotate(canv, params, 0)
 
 class ActorExit(ActorMovement):
 
-    pass
+    def annotate(self, canv: canvas.Canvas, params: AnnotationParameters):
+        return super().annotate(canv, params, 2, 0.5)
 
 class WarnActorEntrance(ActorMovement):
 
-    pass
+    def annotate(self, canv: canvas.Canvas, params: AnnotationParameters):
+        pos = np.array(params.get_snapped_coordinates(self, canv._pagesize))
+        canv.setFontSize(params.bigFontSize)
+        text_pos = (pos+np.array([0, params.bigFontSize/5]))
+        self._draw_triangle(canv, pos, params, 3, 1)
+        canv.drawCentredString(*text_pos, self.actor.number)
+
 
 class ActorLine(Annotation):
 
@@ -101,7 +133,8 @@ class AnnotationParameters:
     positions = {
         Annotation: [None, None],
         ActorEntrance: ["left", None],
-        WarnActorEntrance: ["left", None],
+        ActorExit: ["left", None],
+        WarnActorEntrance: ["right", None],
         ActorLine: ["left", None],
         SoundCue: ["right", None],
         WarningNote: [None, None],
