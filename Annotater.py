@@ -9,7 +9,6 @@ from reportlab.pdfgen import canvas
 
 # Main Imports
 import Annotation
-import Parameters
 
 class Annotater:
     '''
@@ -19,6 +18,7 @@ class Annotater:
     # Data
     cues = None
     pages = None
+    params = None
 
     # PDF and Paths
     pdf_path = None
@@ -27,12 +27,13 @@ class Annotater:
     output_pdf = None
     path = None
 
-    def __init__(self, pdf_path: Path) -> None:
+    def __init__(self, pdf_path: Path, params: Annotation.AnnotationParameters) -> None:
         self.cues = []
         self.pages = []
         self.path = pdf_path.parent
         self.pdf_path = pdf_path
         self.pdf_output_path = self.path/"modified.pdf"
+        self.params = params
 
     def load_file(self):
         '''Loads the PDF file and creates the annotations file'''
@@ -87,7 +88,7 @@ class Page:
         dimensions = self.parent.get_dimensions(old_page_obj)
         annotation_canvas = canvas.Canvas(packet, dimensions)
         for annotation in self.annotations:
-            annotation.annotate(annotation_canvas)
+            annotation.annotate(annotation_canvas, self.parent.params)
         annotation_canvas.save()
         packet.seek(0)
         new_page_pdf = pdf.PdfFileReader(packet)
@@ -95,16 +96,17 @@ class Page:
             return None
         return new_page_pdf.pages[0]
 
-
     def add_annotation(self, annotation: Annotation.Annotation):
         self.annotations.append(annotation)
 
 if __name__ == "__main__":
-    PARAMS = Parameters.AnnotationParameters()
+    PARAMS = Annotation.AnnotationParameters(
+        [72 for _ in range(4)]
+    )
     TEST_PATH = '/Users/zpogrebin/Google Drive/Homework:Assignments/220712ScriptAnalyzer/Package'
-    ANNOTATER = Annotater(Path(TEST_PATH)/"Script.pdf")
+    ANNOTATER = Annotater(Path(TEST_PATH)/"Script.pdf", PARAMS)
     ANNOTATER.load_file()
     ANNOTATER.make_pages()
-    ANNOTATER.pages[0].add_annotation(Annotation.Annotation([20,20],"HELLO"))
+    ANNOTATER.pages[0].add_annotation(Annotation.ActorEntrance([200,20],Annotation.Actor('5', 'Anna')))
     ANNOTATER.output()
     print("DONE")
