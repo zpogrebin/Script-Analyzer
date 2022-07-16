@@ -16,7 +16,7 @@ def reset_colors(canv: canvas.Canvas):
 def grey(percent: float):
     return (int(percent*255) for _ in range(3))
 
-class Annotation: 
+class Annotation:
     '''Base Annotation Class'''
 
     pos = None
@@ -47,7 +47,7 @@ class Annotation:
             canv.setStrokeColorRGB(*stroke)
         canv.drawPath(poly, stroke=stroke is not None, fill=fill is not None)
         reset_colors(canv)
-        
+
 class ActorMovement(Annotation):
 
     actor = None
@@ -57,7 +57,7 @@ class ActorMovement(Annotation):
         self.actor = actor
         super().__init__(pos, actor.number, actor.name)
 
-    def _draw_triangle(self, canv: canvas.Canvas, pos, 
+    def _draw_triangle(self, canv: canvas.Canvas, pos,
                        params: AnnotationParameters, rotation=0, size=1):
         base = params.itemSize*size
         height = base*math.sqrt(3)/2
@@ -118,6 +118,10 @@ class SoundCue(Annotation):
 
     pass
 
+class SoundSnap(SoundCue):
+
+    pass
+
 class WarningNote(Annotation):
 
     pass
@@ -127,7 +131,7 @@ class Note(Annotation):
     pass
 
 class AnnotationParameters:
-    
+
     margins = None
 
     positions = {
@@ -159,7 +163,7 @@ class AnnotationParameters:
 
     def get_snapped_coordinates(self, obj: Annotation, page_size):
         prototypes = self.positions[type(obj)]
-        if prototypes is None: 
+        if prototypes is None:
             return obj.pos
         new_pos = []
         for elem, prototype, size in zip(obj.pos, prototypes, page_size):

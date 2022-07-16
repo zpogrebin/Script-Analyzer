@@ -1,6 +1,7 @@
 # Standard Imports
 from pathlib import Path
 import io
+import os
 
 # External imports
 import jsonpickle
@@ -10,15 +11,40 @@ from reportlab.pdfgen import canvas
 # Main Imports
 import Annotation
 
+class AllUserData:
+    '''
+    Contains all annotation data
+    '''
+
+    # Data
+    cues = None
+    snaps = None
+    pages = None
+    params = None
+    actors = None
+
+    def __init__(self, params: Annotation.AnnotationParameters) -> None:
+        self.params = params
+        self.cues = {}
+        self.snaps = {}
+        self.pages = []
+
+    def register_cue(self, number: float, annotation: Annotation.SoundCue):
+        if number in self.cues: return False
+        self.cues[number] = annotation
+        return True
+
+    def register_snap(self, number: float, annotation: Annotation.SoundSnap):
+        if number in self.snaps: return False
+        self.snaps[number] = annotation
+        return True
+
 class Annotater:
     '''
     Wrapper class for actual annotation features and drawing
     '''
 
-    # Data
-    cues = None
-    pages = None
-    params = None
+    user_data = None
 
     # PDF and Paths
     pdf_path = None
@@ -28,12 +54,10 @@ class Annotater:
     path = None
 
     def __init__(self, pdf_path: Path, params: Annotation.AnnotationParameters) -> None:
-        self.cues = []
-        self.pages = []
+        self.user_data = AllUserData(params)
         self.path = pdf_path.parent
         self.pdf_path = pdf_path
         self.pdf_output_path = self.path/"modified.pdf"
-        self.params = params
 
     def load_file(self):
         '''Loads the PDF file and creates the annotations file'''
@@ -42,7 +66,8 @@ class Annotater:
 
     def make_pages(self):
         '''Creates blank page objects'''
-        self.pages = [Page(self) for _ in range(self.old_pdf.getNumPages())]
+        pages = [Page() for _ in range(self.old_pdf.getNumPages())]
+        self.user_data.pages = pages
 
     def output(self):
         '''Exports the updated pdf'''
@@ -51,8 +76,8 @@ class Annotater:
         self.output_pdf.write(output_stream)
 
     def merge_pages_with_annotations(self):
-        for page, old_page_obj in zip(self.pages, self.old_pdf.pages):
-            new_page_obj = page.annotate(old_page_obj)
+        for page, old_page_obj in zip(self.user_data.pages, self.old_pdf.pages):
+            new_page_obj = page.annotate(old_page_obj, self)
             if new_page_obj is None:
                 self.output_pdf.addPage(old_page_obj)
             else:
@@ -65,11 +90,27 @@ class Annotater:
         height = dims[3]-dims[1]
         return width, height
 
-    def save(self):
+    def save_annotations(self):
         path = self.path/"annotations.json"
-        data = jsonpickle.encode(self)
-        with open(path) as file:
+        data = jsonpickle.encode(self.user_data, indent=4)
+        if os.path.isfile(path):
+            mode = 'w'
+        else:
+            mode = 'x'
+        with open(path, mode) as file:
             file.write(data)
+
+    def get_page(self, page: int):
+        return self.user_data.pages[page]
+
+    def get_params(self):
+        return self.user_data.params
+
+    def load_annotations(self):
+        path = self.path/"annotations.json"
+        with open(path, 'r') as file:
+            data = file.read()
+            self.user_data = jsonpickle.decode(data)
 
 class Page:
     '''
@@ -77,18 +118,16 @@ class Page:
     '''
 
     annotations = None
-    parent = None
 
-    def __init__(self, parent: Annotater) -> None:
+    def __init__(self) -> None:
         self.annotations = []
-        self.parent = parent
 
-    def annotate(self, old_page_obj: pdf.pdf.PageObject):
+    def annotate(self, old_page_obj: pdf.pdf.PageObject, parent: Annotater):
         packet = io.BytesIO()
-        dimensions = self.parent.get_dimensions(old_page_obj)
+        dimensions = parent.get_dimensions(old_page_obj)
         annotation_canvas = canvas.Canvas(packet, dimensions)
         for annotation in self.annotations:
-            annotation.annotate(annotation_canvas, self.parent.params)
+            annotation.annotate(annotation_canvas, parent.get_params())
         annotation_canvas.save()
         packet.seek(0)
         new_page_pdf = pdf.PdfFileReader(packet)
@@ -107,10 +146,12 @@ if __name__ == "__main__":
     ANNOTATER = Annotater(Path(TEST_PATH)/"Script.pdf", PARAMS)
     ANNOTATER.load_file()
     ANNOTATER.make_pages()
-    ANNOTATER.pages[0].add_annotation(Annotation.ActorEntrance([200,20],Annotation.Actor('5', 'Anna')))
-    ANNOTATER.pages[0].add_annotation(Annotation.ActorExit([50,200],Annotation.Actor('5', 'Anna')))
-    ANNOTATER.pages[0].add_annotation(Annotation.WarnActorEntrance([100,100],Annotation.Actor('5', 'Anna')))
-    ANNOTATER.pages[0].add_annotation(Annotation.SoundCue([100,500],"SQ171", "Sound Cue", [300, 120]))
-    ANNOTATER.pages[0].add_annotation(Annotation.SoundCue([100,400],"SN201"))
+    # ANNOTATER.load_annotations()
+    ANNOTATER.get_page(0).add_annotation(Annotation.ActorEntrance([200,20],Annotation.Actor('5', 'Anna')))
+    ANNOTATER.get_page(0).add_annotation(Annotation.ActorExit([50,200],Annotation.Actor('5', 'Anna')))
+    ANNOTATER.get_page(0).add_annotation(Annotation.WarnActorEntrance([100,100],Annotation.Actor('5', 'Anna')))
+    ANNOTATER.get_page(0).add_annotation(Annotation.SoundCue([100,500],"SQ171", "Sound Cue", [300, 120]))
+    ANNOTATER.get_page(0).add_annotation(Annotation.SoundCue([100,400],"SN201"))
     ANNOTATER.output()
+    ANNOTATER.save_annotations()
     print("DONE")

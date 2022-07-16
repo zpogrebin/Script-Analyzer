@@ -1,0 +1,338 @@
+{
+    "py/object": "__main__.AllUserData",
+    "params": {
+        "py/object": "Annotation.AnnotationParameters",
+        "margins": [
+            72,
+            72,
+            72,
+            72
+        ],
+        "margin_map": {
+            "left": 36.0,
+            "right": 36.0,
+            "top": 36.0,
+            "bottom": 36.0
+        }
+    },
+    "cues": {},
+    "snaps": {},
+    "pages": [
+        {
+            "py/object": "__main__.Page",
+            "annotations": [
+                {
+                    "py/object": "Annotation.ActorEntrance",
+                    "actor": {
+                        "py/object": "Annotation.Actor",
+                        "name": "Anna",
+                        "number": "5",
+                        "color": null
+                    },
+                    "pos": [
+                        200,
+                        20
+                    ],
+                    "text": "5",
+                    "alt_text": "Anna",
+                    "leader_pos": null
+                },
+                {
+                    "py/object": "Annotation.ActorExit",
+                    "actor": {
+                        "py/object": "Annotation.Actor",
+                        "name": "Anna",
+                        "number": "5",
+                        "color": null
+                    },
+                    "pos": [
+                        50,
+                        200
+                    ],
+                    "text": "5",
+                    "alt_text": "Anna",
+                    "leader_pos": null
+                },
+                {
+                    "py/object": "Annotation.WarnActorEntrance",
+                    "actor": {
+                        "py/object": "Annotation.Actor",
+                        "name": "Anna",
+                        "number": "5",
+                        "color": null
+                    },
+                    "pos": [
+                        100,
+                        100
+                    ],
+                    "text": "5",
+                    "alt_text": "Anna",
+                    "leader_pos": null
+                },
+                {
+                    "py/object": "Annotation.SoundCue",
+                    "pos": [
+                        100,
+                        500
+                    ],
+                    "text": "SQ171",
+                    "alt_text": "Sound Cue",
+                    "leader_pos": [
+                        300,
+                        120
+                    ]
+                },
+                {
+                    "py/object": "Annotation.SoundCue",
+                    "pos": [
+                        100,
+                        400
+                    ],
+                    "text": "SN201",
+                    "alt_text": "",
+                    "leader_pos": null
+                }
+            ]
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        },
+        {
+            "py/object": "__main__.Page",
+            "annotations": []
+        }
+    ]
+}
